@@ -278,17 +278,15 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
 #' @param mark description of the mark 'DBH', or NA is none.
 #' @param graph TRUE or FALSE. Defaults to FALSE
 #' @param Status "living" or "dead"
+#' @param method "size500" or "normal"
 #' @keywords replicate_patterns
 #' @export
 #' @examples
 #' rank_test_replicated_dbh_500 <- replicate_patterns_to_rank_test(replicate_patterns_dbh_size500,"dbh",graph=TRUE)
 
 
-<<<<<<< 5813a18aeef426de5e5de6ffc91e9ea3114203a2
-replicate_patterns_to_rank_test <- function (Status,replicate_patterns,mark,graph) {
-=======
+
 replicate_patterns_to_rank_test <- function (Status,replicate_patterns, method, mark,graph) {
->>>>>>> 	nouveau fichier : DESCRIPTION
     library(spptest)
     rank_env_dbh_replicated_all <- NULL
     for (i in names(replicate_patterns)){
