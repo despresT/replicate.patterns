@@ -4,7 +4,11 @@
 \alias{replicate_patterns_to_rank_test}
 \title{This function will compute the rank test from replicated patterns}
 \usage{
+<<<<<<< 5813a18aeef426de5e5de6ffc91e9ea3114203a2
 replicate_patterns_to_rank_test(Status, replicate_patterns, mark, graph)
+=======
+replicate_patterns_to_rank_test(Status, replicate_patterns, method, mark, graph)
+>>>>>>> 	nouveau fichier : DESCRIPTION
 }
 \arguments{
 \item{Status}{"living" or "dead"}
