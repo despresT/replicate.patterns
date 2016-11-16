@@ -80,37 +80,44 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
 
             data_tree_selected <- data[as.character(data$Site_and_Plot_ID)%in% names_rank_result_selected,]
 
-            data_tree_selected_stands_normal <-   data_tree_selected[data_tree_selected$distance_W_DBH<=17.846]#selecte tree of plot size 1000 within a plot size 500 radius of 12.62m from the center
+
+              data_tree_selected$distance <- sqrt ( data_tree_selected$x_m^2+  data_tree_selected$y_m^2)
+
+
+
+
+
+            data_tree_selected_stands_normal <-   data_tree_selected[data_tree_selected$distance<=17.846]#selecte tree of plot size 1000 within a plot size 500 radius of 12.62m from the center
 
             number_tree_per_for_each_stands_normal<- tapply( data_tree_selected_stands_normal$Global_ID,as.character( data_tree_selected_stands_normal$Site_and_Plot_ID)   ,length)
 
-            number_of_trees_and_plot_size_normal <- rbind( number_tree_per_for_each_stands_normal, data_plot_selected[select_in_rank_result]$Plot_Size )
+            number_of_trees_and_plot_size_normal <- rbind( number_tree_per_for_each_stands_normal, data_plot_selected[select_in_rank_result]$plotsize )
 
             number_of_trees_and_plot_size_normal <- as.data.table(t(number_of_trees_and_plot_size_normal))
-            colnames(number_of_trees_and_plot_size_normal) <- c("Number_of_trees","Plot_Size")
+            colnames(number_of_trees_and_plot_size_normal) <- c("Number_of_trees","plotsize")
             rownames(number_of_trees_and_plot_size_normal) <-  names( rank_result_stand )
-            resume_number_of_tree_per_plot_size_normal <- tapply(number_of_trees_and_plot_size_normal$Number_of_trees,as.character(number_of_trees_and_plot_size_normal$Plot_Size),sum)#compute the number of trees per plot size for the stand "y"
+            resume_number_of_tree_per_plot_size_normal <- tapply(number_of_trees_and_plot_size_normal$Number_of_trees,as.character(number_of_trees_and_plot_size_normal$plotsize),sum)#compute the number of trees per plot size for the stand "y"
 
-             if ( length(unique(data_plot_selected$Plot_Size))>2) {
+             if ( length(unique(data_plot_selected$plotsize))>2) {
                  resume_number_of_tree_per_plot_size_500 <- NA
                  } else {
 
-            data_tree_selected_stands_500 <-   data_tree_selected[data_tree_selected$distance_W_DBH<=12.62]#selecte tree of plot size 1000 within a plot size 500 radius of 12.62m from the center
+            data_tree_selected_stands_500 <-   data_tree_selected[data_tree_selected$distance<=12.62]#selecte tree of plot size 1000 within a plot size 500 radius of 12.62m from the center
             number_tree_per_for_each_stands_500 <- tapply(data_tree_selected_stands_500$Global_ID,as.character(data_tree_selected_stands_500$Site_and_Plot_ID)   ,length)
 
 
-            number_of_trees_and_plot_size_500 <- rbind( number_tree_per_for_each_stands_500, gsub("1000", "1000_resize_500",  data_plot_selected[select_in_rank_result]$Plot_Size))
+                     number_of_trees_and_plot_size_500 <- rbind( number_tree_per_for_each_stands_500, gsub("1000", "1000_resize_500",  data_plot_selected[select_in_rank_result]$plotsize))
             assign("last.warning", NULL, envir = baseenv())#remove warnings() from rbind
 
             number_of_trees_and_plot_size_500 <- as.data.table(t(number_of_trees_and_plot_size_500))
-            colnames(number_of_trees_and_plot_size_500) <- c("Number_of_trees","Plot_Size")
+            colnames(number_of_trees_and_plot_size_500) <- c("Number_of_trees","plotsize")
             rownames(number_of_trees_and_plot_size_500) <-  names( rank_result_stand )
-            resume_number_of_tree_per_plot_size_500 <- tapply(as.numeric(number_of_trees_and_plot_size_500$Number_of_trees),as.character(number_of_trees_and_plot_size_500$Plot_Size),sum)#compute the number of trees per plot size for the stand "y"
+            resume_number_of_tree_per_plot_size_500 <- tapply(as.numeric(number_of_trees_and_plot_size_500$Number_of_trees),as.character(number_of_trees_and_plot_size_500$plotsize),sum)#compute the number of trees per plot size for the stand "y"
             resume_number_of_tree_per_plot_size_500 <- resume_number_of_tree_per_plot_size_500[1]
                  }
 
 
-            inter <- tapply( factor(data_plot_selected$Plot_Size,levels= as.character( unique(data_plot$Plot_Size))),as.character(data_plot_selected$Site_ID),summary)[y]
+            inter <- tapply( factor(data_plot_selected$plotsize,levels= as.character( unique(data_plot$plotsize))),as.character(data_plot_selected$Site_ID),summary)[y]
                                         # names(inter)
                                         # names(inter[[1]])
                                         # as.numeric(inter[[1]])
@@ -118,16 +125,16 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
                                           names(inter),
                                           names(inter[[1]]),
                                           as.numeric(inter[[1]]))
-            colnames( data_plot_size_stand ) <- c("Country","Stand_name","Plot_size","Number_of_plots")
+            colnames( data_plot_size_stand ) <- c("Country","Stand_name","plotsize","Number_of_plots")
             data_plot_size_stand <- as.data.table(data_plot_size_stand)
 
-            data_plot_size_stand_normal <- cbind(data_plot_size_stand[ as.character(Plot_size) %in% names(resume_number_of_tree_per_plot_size_normal),],Number_of_trees=resume_number_of_tree_per_plot_size_normal)#add the number of trees per plot size for the selected stand 'y' and remove Plot__size with 0 trees
+            data_plot_size_stand_normal <- cbind(data_plot_size_stand[ as.character(plotsize) %in% names(resume_number_of_tree_per_plot_size_normal),],Number_of_trees=resume_number_of_tree_per_plot_size_normal)#add the number of trees per plot size for the selected stand 'y' and remove Plot__size with 0 trees
             #compute number of trees for resize 500 plots
 
             if(dim( data_plot_size_stand_normal )[1] >= 2) { #run the 1000 resize 500 only for stands with more than 1 type size
-                plot_1000_resize_500 <-  data_plot_size_stand_normal[Plot_size==1000]
+                plot_1000_resize_500 <-  data_plot_size_stand_normal[plotsize==1000]
                 plot_1000_resize_500 <- as.data.table(plot_1000_resize_500)
-                plot_1000_resize_500 <- plot_1000_resize_500[Plot_size == plot_1000_resize_500[,Plot_size],Plot_size := names( resume_number_of_tree_per_plot_size_500)]
+                plot_1000_resize_500 <- plot_1000_resize_500[plotsize == plot_1000_resize_500[,plotsize],plotsize := names( resume_number_of_tree_per_plot_size_500)]
                 plot_1000_resize_500 <- plot_1000_resize_500[Number_of_trees==plot_1000_resize_500[,Number_of_trees],Number_of_trees := resume_number_of_tree_per_plot_size_500[[1]]][]
                                         #end computing resize of 500 plots
                 data_plot_size_stand <- rbind( plot_1000_resize_500, data_plot_size_stand_normal )#combine normal and resize information for LOG
@@ -138,7 +145,7 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
             table_plot_size_Log <- rbind(  table_plot_size_Log, data_plot_size_stand)#use for LOG to know the number of trees per stands per plot size class
 
 
-            if(sapply(tapply( data_plot_selected$Plot_Size,as.character(data_plot_selected$Site_ID),unique),length)[[y]]==1) { #if result is TRUE then compute plot size normally otherwise need to choose the method
+            if(sapply(tapply( data_plot_selected$plotsize,as.character(data_plot_selected$Site_ID),unique),length)[[y]]==1) { #if result is TRUE then compute plot size normally otherwise need to choose the method
 
                 r <-  rank_result_stand[[1]]$r
                 pooled_sims <- matrix(nrow=nrow(rank_result_stand[[1]]$sim_m), ncol=ncol(rank_result_stand[[1]]$sim_m))
@@ -186,7 +193,7 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
                     stand_names_select <-  data_plot_selected[ data_plot_selected$Site_and_Plot_ID %in% names(rank_result_stand),]
 
 
-                    stand_selected_diff_1000 <-  stand_names_select[ stand_names_select$Plot_Size!=1000]
+                    stand_selected_diff_1000 <-  stand_names_select[ stand_names_select$plotsize!=1000]
                     names_stand_selected_diff_1000 <- as.character(  stand_selected_diff_1000[,(Site_and_Plot_ID)])
 
                     selected_diff_1000_randomlabelling_country <- rank_result_stand[  names( rank_result_stand) != names_stand_selected_diff_1000]
@@ -262,6 +269,7 @@ replicate_patterns <- function(Status,method,mark, pattern_to_murge) {
 }#end function
 
 
+
 ################################################
 ################################################
 ################################################
@@ -325,7 +333,7 @@ replicate_patterns_to_rank_test <- function (Status,replicate_patterns, method, 
 
 
 
-                png(paste0("Lmm replicated ",mark," ",method," ",y," #",z,".png"))
+                pdf(paste0("Lmm replicated ",mark," ",method," ",y," #",z,".pdf"))
                 plot(rank_env_dbh_replicated_all[[y]][[z]],use_ggplot2=TRUE,ylab=expression(italic(L[mm](r)-L(r)))) +
                 labs(list(title = paste("Plot #",z,sep=" "))) #put the number of the plot as titlex
                 dev.off()
