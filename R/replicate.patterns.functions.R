@@ -383,7 +383,7 @@ for (i in 1:length(names(rank_result))) {
         rank_p_interval_up <-  rank_result[[i]][[y]]$p_interval[2] #p value interval
 
         rank_method <- rank_result[[i]][[y]]$method #method use
-        Inside_Side_ID<- y #number of the plot in a country
+        Site_and_Plot_ID <- y #number of the plot in a country
         significance_1_signi <- ifelse( rank_result[[i]][[y]]$p<0.05,1,0)
         if(significance_1_signi == 1) {
             pattern_state <- if(length( agg_rep_star[c(length(unique(rank_result[[i]][[y]]$data_curve<=rank_result[[i]][[y]]$upper))==2,
@@ -409,7 +409,7 @@ for (i in 1:length(names(rank_result))) {
                                                            }
         }
 
-        data_rank<- data.table( country_name,Inside_Side_ID,rank_method,rank_p_interval_low,rank_p_interval_up,rank_p,significance_1_signi,pattern_state=as.factor(pattern_state))
+        data_rank<- data.table( country_name,Site_and_Plot_ID,rank_method,rank_p_interval_low,rank_p_interval_up,rank_p,significance_1_signi,pattern_state=as.factor(pattern_state))
 
         Lmm_rank_result <-rbind( Lmm_rank_result,data_rank)
     }
