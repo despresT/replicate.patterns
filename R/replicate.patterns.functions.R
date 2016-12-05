@@ -333,10 +333,12 @@ replicate_patterns_to_rank_test <- function (Status,replicate_patterns, method, 
 
 
 
-                pdf(paste0("Lmm replicated ",mark," ",method," ",y," #",z,".pdf"))
+                  #  pdf(paste0("Lmm replicated ",mark," ",method," ",y," #",z,".pdf"))
                 plot(rank_env_dbh_replicated_all[[y]][[z]],use_ggplot2=TRUE,ylab=expression(italic(L[mm](r)-L(r)))) +
-                labs(list(title = paste("Plot #",z,sep=" "))) #put the number of the plot as titlex
-                dev.off()
+                    labs(list(title = paste("Plot #",z,sep=" "))) + #put the number of the plot as titlex
+                    ggsave(paste0("Lmm replicated ",mark," ",method," ",y," #",z,".pdf"))
+
+              #  dev.off())
             }
         }
         setwd(mainDir)
